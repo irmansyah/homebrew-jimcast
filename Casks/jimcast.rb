@@ -19,7 +19,6 @@ cask "jimcast" do
   uninstall quit: "com.jimcast.core"
 
   zap trash: [
-    "~/.config/jimcast",
     "~/Library/Application Support/com.jimcast.core",
     "~/Library/Caches/com.jimcast.core",
     "~/Library/Preferences/com.jimcast.core.plist",
