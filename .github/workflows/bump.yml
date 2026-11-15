@@ -21,7 +21,7 @@ jobs:
           V: ${{ inputs.version }}
         run: |
           [[ "$V" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::bad version: $V"; exit 1; }
-          BASE="https://github.com/jimcast/jimcast-releases/releases/download/v$V"
+          BASE="https://github.com/irmansyah/jimcast-releases/releases/download/v$V"
           ARM="$(curl -fsSL "$BASE/Jimcast_${V}_aarch64.dmg" | shasum -a 256 | cut -d' ' -f1)"
           X64="$(curl -fsSL "$BASE/Jimcast_${V}_x64.dmg" | shasum -a 256 | cut -d' ' -f1)"
           sed -i.bak -E \
@@ -44,5 +44,5 @@ jobs:
 
       - name: Audit pushed cask
         run: |
-          brew tap jimcast/jimcast
-          brew audit --cask --online --strict jimcast/jimcast/jimcast
+          brew tap irmansyah/jimcast
+          brew audit --cask --online --strict irmansyah/jimcast/jimcast

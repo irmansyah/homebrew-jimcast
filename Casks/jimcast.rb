@@ -5,10 +5,10 @@ cask "jimcast" do
   sha256 arm:   "REPLACE",
          intel: "REPLACE"
 
-  url "https://github.com/jimcast/jimcast-releases/releases/download/v#{version}/Jimcast_#{version}_#{arch}.dmg"
+  url "https://github.com/irmansyah/jimcast-releases/releases/download/v#{version}/Jimcast_#{version}_#{arch}.dmg"
   name "Jimcast"
   desc "Keyboard-driven command bar for terminal-native developers"
-  homepage "https://github.com/jimcast/jimcast-releases"
+  homepage "https://github.com/irmansyah/jimcast-releases"
 
   depends_on macos: ">= :monterey"
 
