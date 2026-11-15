@@ -1,0 +1,48 @@
+name: bump
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version without the leading v (e.g. 0.1.0)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update cask version and checksums
+        env:
+          V: ${{ inputs.version }}
+        run: |
+          [[ "$V" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::bad version: $V"; exit 1; }
+          BASE="https://github.com/jimcast/jimcast-releases/releases/download/v$V"
+          ARM="$(curl -fsSL "$BASE/Jimcast_${V}_aarch64.dmg" | shasum -a 256 | cut -d' ' -f1)"
+          X64="$(curl -fsSL "$BASE/Jimcast_${V}_x64.dmg" | shasum -a 256 | cut -d' ' -f1)"
+          sed -i.bak -E \
+            -e "s/^( *version )\".*\"/\1\"$V\"/" \
+            -e "s/^( *sha256 arm: +)\"[^\"]*\"/\1\"$ARM\"/" \
+            -e "s/^( *intel: +)\"[^\"]*\"/\1\"$X64\"/" \
+            Casks/jimcast.rb
+          rm Casks/jimcast.rb.bak
+          cat Casks/jimcast.rb
+
+      - name: Commit and push
+        env:
+          V: ${{ inputs.version }}
+        run: |
+          git config user.name "jimcast-bot"
+          git config user.email "jimcast-bot@users.noreply.github.com"
+          git add Casks/jimcast.rb
+          git diff --cached --quiet || git commit -m "jimcast $V"
+          git push
+
+      - name: Audit pushed cask
+        run: |
+          brew tap jimcast/jimcast
+          brew audit --cask --online --strict jimcast/jimcast/jimcast
